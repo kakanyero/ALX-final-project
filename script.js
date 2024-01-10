@@ -1,64 +1,3 @@
-const bar = document.getElementById("bar");
-const close = document.getElementById("close");
-const nav = document.getElementById("navbar");
-
-if (bar) {
-  bar.addEventListener("click", () => {
-    nav.classList.add("active");
-  });
-}
-if (close) {
-  close.addEventListener("click", () => {
-    nav.classList.remove("active");
-  });
-}
-
-
-// i added the following
-
-
-document.addEventListener('DOMContentLoaded', function () {
-    // Select all remove buttons
-    var removeButtons = document.querySelectorAll('#cart tbody tr td:first-child a');
-
-    // Add click event listener to each remove button
-    removeButtons.forEach(function (button) {
-        button.addEventListener('click', function (event) {
-            // Prevent the default link behavior
-            event.preventDefault();
-
-            // Get the parent row and remove it from the table
-            var row = button.closest('tr');
-            row.parentNode.removeChild(row);
-        });
-    });
-
-    // Select all quantity input fields
-    var quantityInputs = document.querySelectorAll('#cart tbody tr td:nth-child(5) input');
-
-    // Add input event listener to each quantity input
-    quantityInputs.forEach(function (input) {
-        input.addEventListener('input', function () {
-            // Get the parent row
-            var row = input.closest('tr');
-
-            // Get the price and calculate the subtotal
-            var price = parseFloat(row.querySelector('td:nth-child(4)').textContent.replace(' EGP', ''));
-            var quantity = parseInt(input.value);
-            var subtotal = price * quantity;
-
-            // Update the subtotal in the table
-            row.querySelector('td:nth-child(6)').textContent = subtotal + ' EGP';
-        });
-    });
-});
-
-
-
-
-//added the following
-
-
 document.addEventListener('DOMContentLoaded', function () {
   // Select all remove buttons
   var removeButtons = document.querySelectorAll('#cart tbody tr td:first-child a');
@@ -81,13 +20,21 @@ document.addEventListener('DOMContentLoaded', function () {
   // Select all quantity input fields
   var quantityInputs = document.querySelectorAll('#cart tbody tr td:nth-child(5) input');
 
-  // Add input event listener to each quantity input
+  // Add input and change event listener to each quantity input
   quantityInputs.forEach(function (input) {
-      input.addEventListener('input', function () {
-          // Update the cart total when the quantity changes
-          updateCartTotal();
-      });
+      input.addEventListener('input', handleQuantityChange);
+      input.addEventListener('change', handleQuantityChange);
   });
+
+  // Function to handle quantity change
+  function handleQuantityChange() {
+      // Update the cart subtotal when the quantity changes
+      var price = parseFloat(this.closest('tr').querySelector('td:nth-child(4)').textContent.replace(' EGP', ''));
+      var quantity = parseInt(this.value);
+      var subtotal = price * quantity;
+      this.closest('tr').querySelector('td:nth-child(6)').textContent = subtotal.toFixed(2) + ' EGP';
+      updateCartTotal();
+  }
 
   // Function to update cart total
   function updateCartTotal() {
